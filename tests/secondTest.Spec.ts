@@ -1,4 +1,4 @@
-import {test} from '@playwright/test'
+import {expect, test} from '@playwright/test'
 
 //Before all test wil be execute just once  
 // test.beforeAll(()=>{
@@ -73,6 +73,24 @@ await page.locator('nb-card').filter({has: page.locator('nb-checkbox')}).filter(
 await page.locator(':text-is("Using the Grid")').locator('..').getByRole('textbox', {name: "Email"}).click()
     
     
+})
+
+test ('Reusing the locators', async({page})=>{
+
+    const basicForm = page.locator('nb-card').filter({hasText:"Basic form"})
+    const emailField = basicForm.getByRole('textbox', {name: "Email"})
+
+    await emailField.fill('test@test.com')
+    await basicForm.getByRole('textbox', {name: "password"}).fill('Welcome123')
+    await basicForm.locator('nb-checkbox').click()
+    await basicForm.getByRole('button').click()
+
+    await expect(emailField).toHaveValue('test@test.com')
+
+    
+
+
+
 })
 
 
