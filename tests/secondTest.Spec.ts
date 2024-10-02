@@ -108,6 +108,7 @@ test ('extracting value', async({page})=>{
 
     const placeholderValue = await emailField.getAttribute('placeholder')
     expect(placeholderValue).toEqual('Email')
+    
 
 })
 
