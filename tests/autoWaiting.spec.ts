@@ -1,9 +1,11 @@
 import {test, expect} from  '@playwright/test'
 
 
-test.beforeEach(async({page})=>{
+test.beforeEach(async({page}, testInfo)=>{
+
     await page.goto('http://uitestingplayground.com/ajax')
     await page.getByText('Button Triggering AJAX Request').click()
+    testInfo.setTimeout(testInfo.timeout + 2000)
 
 })
 
@@ -45,3 +47,17 @@ test('auto waiting', async({page}) =>{
 
 
     })
+
+
+
+    test('timeouts', async({page}) =>{
+        
+       // test.setTimeout(10000)
+        test.slow
+        const succcesbutton = page.locator('.bg-success')
+        //overide timeout
+        //await   succcesbutton.click({timeout: 16000})
+        await   succcesbutton.click()
+       
+        
+        })
