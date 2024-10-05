@@ -51,7 +51,6 @@ test('auto waiting', async({page}) =>{
 
 
     test('timeouts', async({page}) =>{
-        
        // test.setTimeout(10000)
         test.slow
         const succcesbutton = page.locator('.bg-success')
