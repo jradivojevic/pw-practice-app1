@@ -101,6 +101,4 @@ test('tooltips', async ({ page }) => {
     expect(toopTip).toEqual('This is a tooltip')
 
 
-
-
 })
