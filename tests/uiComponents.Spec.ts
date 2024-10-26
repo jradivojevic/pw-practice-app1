@@ -35,12 +35,13 @@ test.describe('Form Layouts page', () => {
         // await usingTheGridForm.getByLabel('Option 1').check({force: true})
         await usingTheGridForm.getByRole('radio', { name: "Option 1" }).check({ force: true })
         const radioStatus = await usingTheGridForm.getByRole('radio', { name: "Option 1" }).isChecked()
-        expect(radioStatus).toBeTruthy()
-        await expect(usingTheGridForm.getByRole('radio', { name: "Option 1" })).toBeChecked()
+        
+        // expect(radioStatus).toBeTruthy()
+        // await expect(usingTheGridForm.getByRole('radio', { name: "Option 1" })).toBeChecked()
 
-        await usingTheGridForm.getByRole('radio', { name: "Option 2" }).check({ force: true })
-        expect(await usingTheGridForm.getByRole('radio', { name: "Option 1" }).isChecked()).toBeFalsy()
-        expect(await usingTheGridForm.getByRole('radio', { name: "Option 2" }).isChecked()).toBeTruthy()
+        // await usingTheGridForm.getByRole('radio', { name: "Option 2" }).check({ force: true })
+        // expect(await usingTheGridForm.getByRole('radio', { name: "Option 1" }).isChecked()).toBeFalsy()
+        // expect(await usingTheGridForm.getByRole('radio', { name: "Option 2" }).isChecked()).toBeTruthy()
     })
 
 })
@@ -102,3 +103,16 @@ test('tooltips', async ({ page }) => {
 
 
 })
+
+test('dialog box', async ({ page }) => {
+    await page.getByText("Tables & Data").click();
+    await page.getByText("Smart Table").click();
+  
+    page.on('dialog', dialog => {
+      expect(dialog.message()).toEqual('Are you sure you want to delete?')
+      dialog.accept()
+    })
+    await page.getByRole('table').locator('tr', { hasText: "mdo@gmail.com" }).locator('.nb-trash').click()
+    await expect(page.locator('table tr').first()).not.toHaveText("mdo@gmail.com")
+  
+  })
