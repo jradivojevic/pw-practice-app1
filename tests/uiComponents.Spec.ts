@@ -35,7 +35,7 @@ test.describe('Form Layouts page', () => {
         // await usingTheGridForm.getByLabel('Option 1').check({force: true})
         await usingTheGridForm.getByRole('radio', { name: "Option 1" }).check({ force: true })
         const radioStatus = await usingTheGridForm.getByRole('radio', { name: "Option 1" }).isChecked()
-        
+
         // expect(radioStatus).toBeTruthy()
         // await expect(usingTheGridForm.getByRole('radio', { name: "Option 1" })).toBeChecked()
 
@@ -89,7 +89,7 @@ test('list and dropdowns', async ({ page }) => {
             await dropDownMenu.click()
     }
 
-   
+
 })
 
 test('tooltips', async ({ page }) => {
@@ -107,12 +107,59 @@ test('tooltips', async ({ page }) => {
 test('dialog box', async ({ page }) => {
     await page.getByText("Tables & Data").click();
     await page.getByText("Smart Table").click();
-  
+
     page.on('dialog', dialog => {
-      expect(dialog.message()).toEqual('Are you sure you want to delete?')
-      dialog.accept()
+        expect(dialog.message()).toEqual('Are you sure you want to delete?')
+        dialog.accept()
     })
     await page.getByRole('table').locator('tr', { hasText: "mdo@gmail.com" }).locator('.nb-trash').click()
     await expect(page.locator('table tr').first()).not.toHaveText("mdo@gmail.com")
-  
-  })
+
+})
+
+test('web tables', async ({ page }) => {
+    await page.getByText("Tables & Data").click()
+    await page.getByText("Smart Table").click()
+    //1 get row by any test in this row
+    const targetRow = page.getByRole('row', { name: 'twitter@outlook.com' })
+    await targetRow.locator('.nb-edit').click()
+    await page.locator('input-editor').getByPlaceholder('Age').clear()
+    await page.locator('input-editor').getByPlaceholder('Age').fill('35')
+    await page.locator('.nb-checkmark').click()
+
+    //2 get row based on value in the specific column
+    await page.locator('.ng2-smart-pagination').getByText('2').click()
+    const targetRowById = page.getByRole('row', { name: '11' }).filter({ has: page.locator('td').nth(1).getByText('11') })
+    await targetRowById.locator('.nb-edit').click()
+    await page.locator('input-editor').getByPlaceholder('E-mail').clear()
+    await page.locator('input-editor').getByPlaceholder('E-mail').fill('test@test.com')
+    await page.locator('.nb-checkmark').click()
+    await expect(targetRowById.locator('td').nth(5)).toHaveText('test@test.com')
+
+    //3 test filter of the table
+
+    const ages = ["20", "30", "40", "200"]
+
+    for (let age of ages) {
+        await page.locator('input-filter').getByPlaceholder('Age').clear()
+        await page.locator('input-filter').getByPlaceholder('Age').fill(age)
+        await page.waitForTimeout(500)
+        const ageRows = page.locator('tbody tr')
+
+        for (let row of await ageRows.all()) {
+            const cellValue = await row.locator('td').last().textContent()
+            if (age == "200") {
+                expect(await page.getByRole('table').textContent()).toContain('No data found')
+            } else {
+                expect(cellValue).toEqual(age)
+
+            }
+
+
+
+        }
+
+    }
+})
+
+
