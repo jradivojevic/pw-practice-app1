@@ -163,3 +163,40 @@ test('web tables', async ({ page }) => {
 })
 
 
+test('datepicker', async({page}) => {
+    await page.getByText('Forms').click()
+    await page.getByText('Datepicker').click()
+
+    const calendarInputField = page.getByPlaceholder('Form Picker')
+    await calendarInputField.click()
+
+    // THIS IS PART ONE
+    // await page.locator('[class="day-cell ng-star-inserted"]').getByText('11', {exact: true}).click()
+    // await page.locator('nb-calendar-day-cell').filter({hasNot: page.locator('.bounding-month')}).getByText('19', {exact: true}).click()
+    // await expect(calendarInputField).toHaveValue('May 11, 2023')
+
+    //THIS IS PART TWO
+    let date = new Date()
+    date.setDate(date.getDate() + 300)
+    const expectedDay = date.getDate().toString()
+    const expectedMonthShort = date.toLocaleString('En-US', {month: 'short'})
+    const expectedMonthLong = date.toLocaleString('En-US', {month: 'long'})
+    const expectedYear = date.getFullYear()
+    const dateToAssert = `${expectedMonthShort} ${expectedDay}, ${expectedYear}`
+
+    let calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    const expectedMonthAndYear = ` ${expectedMonthLong} ${expectedYear} `
+    while(!calendarMonthAndYear.includes(expectedMonthAndYear)){
+        await page.locator('nb-calendar-pageable-navigation [data-name="chevron-right"]').click()
+        calendarMonthAndYear = await page.locator('nb-calendar-view-mode').textContent()
+    }
+
+    await page.locator('[class="day-cell ng-star-inserted"]').getByText(expectedDay, {exact: true}).click()
+    await expect(calendarInputField).toHaveValue(dateToAssert)
+
+})
+
+
+
+
+
